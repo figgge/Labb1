@@ -111,30 +111,58 @@ public class PricePerHour {
         System.out.println("Medelpris per kw/h: " + (Math.round(fourHourPrice[min] / 4) + " öre"));
     }
 
+//    public static void visualization(PricePerHour[] priceList, int minPriceIndex, int maxPriceIndex){
+//        int maxPriceLength = String.valueOf(priceList[maxPriceIndex].getPrice()).length();
+//        int minPriceLength = String.valueOf(priceList[minPriceIndex].getPrice()).length();
+//
+//        for (int y = 0; y < 12; y++) {
+//            System.out.println();
+//            for (int x = 0; x < 77; x++) {
+//                if (y == 0 && x == 0)
+//                    System.out.print(priceList[maxPriceIndex].getPrice() + Main.addSpaces( 5 - maxPriceLength)); // ändra till border
+//                else if (y == 9 && x == 0)
+//                    System.out.print(priceList[minPriceIndex].getPrice() + Main.addSpaces( 5 - minPriceLength));
+//                if (x == 5 && y != 0 && y != 9 && y != 11)
+//                    System.out.print("     |");
+//                else if (x == 5)
+//                    System.out.print("|");
+//                else if (y == 10 & x > 5)
+//                    System.out.print("-");
+//                else if (y == 11 & x > 5 && x - 6 < priceList.length)
+//                    System.out.print(priceList[x-6].getHour().substring(0,2) + " ");
+//                else if (y == 11)
+//                    System.out.print(" ");
+//                if (x > 5 && x - 6 < priceList.length && y < 10 && checkPriceRange(priceList, x - 6) <= y)
+//                    System.out.print(" * ");
+//                else if (x > 5 && x - 6 < priceList.length && y < 10)
+//                    System.out.print("   ");
+//            }
+//        }
+//        System.out.println();
+//    }
     public static void visualization(PricePerHour[] priceList, int minPriceIndex, int maxPriceIndex){
         int maxPriceLength = String.valueOf(priceList[maxPriceIndex].getPrice()).length();
         int minPriceLength = String.valueOf(priceList[minPriceIndex].getPrice()).length();
+        int distanceToOutline = Math.max(maxPriceLength, 5);
 
         for (int y = 0; y < 12; y++) {
             System.out.println();
             for (int x = 0; x < 77; x++) {
                 if (y == 0 && x == 0)
-                    System.out.print(priceList[maxPriceIndex].getPrice() + Main.addSpaces( 5 - maxPriceLength)); // ändra till border
+                    System.out.print(priceList[maxPriceIndex].getPrice() + Main.addSpaces( distanceToOutline - maxPriceLength) + "|");
                 else if (y == 9 && x == 0)
-                    System.out.print(priceList[minPriceIndex].getPrice() + Main.addSpaces( 5 - minPriceLength));
-                if (x == 5 && y != 0 && y != 9 && y != 11)
-                    System.out.print("     |");
-                else if (x == 5)
-                    System.out.print("|");
-                else if (y == 10 & x > 5)
+                    System.out.print(priceList[minPriceIndex].getPrice() + Main.addSpaces( distanceToOutline - minPriceLength) + "|");
+                if (x == distanceToOutline && y != 0 && y != 9 && y != 11)
+                    System.out.print(Main.addSpaces(distanceToOutline) + "|");
+                else if (y == 10 & x > distanceToOutline)
                     System.out.print("-");
-                else if (y == 11 & x > 5 && x - 6 < priceList.length)
-                    System.out.print(priceList[x-6].getHour().substring(0,2) + " ");
+                else if (y == 11 & x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length)
+                    System.out.print(priceList[x - (distanceToOutline + 1)].getHour().substring(0,2) + " ");
                 else if (y == 11)
                     System.out.print(" ");
-                if (x > 5 && x - 6 < priceList.length && y < 10 && checkPriceRange(priceList, x - 6) <= y)
+                if (x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length && y < 10 && checkPriceRange(priceList, x - (distanceToOutline + 1)) <= y)
                     System.out.print(" * ");
-                else if (x > 5 && x - 6 < priceList.length && y < 10)
+                else if (x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length && y < 10)
                     System.out.print("   ");
             }
         }
