@@ -3,15 +3,13 @@ import java.util.Scanner;
 
 
 public class PricePerHour {
-    private String hour;
-    private int price;
+    private final String hour;
+    private final int price;
 
     public PricePerHour(String hour, int price) {
         this.hour = hour;
         this.price = price;
     }
-
-    public static final String[] hoursArray = {"00:00 - 01:00", "01:00 - 02:00", "02:00 - 03:00", "03:00 - 04:00", "04:00 - 05:00", "05:00 - 06:00", "06:00 - 07:00", "07:00 - 08:00", "08:00 - 09:00", "09:00 - 10:00", "10:00 - 11:00", "11:00 - 12:00", "12:00 - 13:00", "13:00 - 14:00", "14:00 - 15:00", "15:00 - 16:00", "16:00 - 17:00", "17:00 - 18:00", "18:00 - 19:00", "19:00 - 20:00", "20:00 - 21:00", "21:00 - 22:00", "22:00 - 23:00", "23:00 - 00:00"};
 
     public String getHour() {
         return hour;
@@ -24,16 +22,35 @@ public class PricePerHour {
 
     public static void inputPrices(PricePerHour[] priceList,  Scanner scanner) {
         System.out.println("Lägg in elpriser: ");
+        int hour = 0;
+        String hourString;
         for (int i = 0; i < 24; i++) {
-            System.out.print(hoursArray[i] + ": ");
-            priceList[i] = new PricePerHour(hoursArray[i], Main.checkIfInteger(scanner));
+            hourString = getHourString(hour);
+            System.out.print(hourString + ": ");
+            priceList[i] = new PricePerHour(hourString, checkIfValidPrice(scanner));
+            hour += 1;
         }
     }
+
+
+    public static String getHourString(int hour) {
+        String hourString;
+        if (hour == 9)
+            hourString = "0" + hour + ":00 - " + (hour + 1) + ":00";
+        else if (hour < 10)
+            hourString = "0" + hour + ":00 - 0" + (hour + 1) + ":00";
+        else
+           hourString = hour + ":00 - " + (hour + 1) + ":00";
+        return hourString;
+    }
+
     public static void inputRandomPrices(PricePerHour[] priceList) {
         Random random = new Random();
+        int hour = 0;
         System.out.println("Lägg in elpriser: ");
         for (int i = 0; i < 24; i++) {
-            priceList[i] = new PricePerHour(hoursArray[i], random.nextInt(1,5000));
+            priceList[i] = new PricePerHour(getHourString(hour), random.nextInt(100,5000));
+            hour += 1;
         }
     }
 
@@ -61,7 +78,7 @@ public class PricePerHour {
         return maxIndex;
     }
 
-    public static int averagePrice(PricePerHour[] priceList) {
+    private static int averagePrice(PricePerHour[] priceList) {
         double sum = 0;
         for (PricePerHour pricePerHour : priceList) {
             sum += pricePerHour.getPrice();
@@ -92,7 +109,7 @@ public class PricePerHour {
     }
 
     public static void cheapestChargingHours(PricePerHour[] priceList) {
-        int[] fourHourPrice = new int[21];
+        double[] fourHourPrice = new double[21];
         for (int i = 0; i < priceList.length -3; i++) {
             int fourHourSum = 0;
             int hour = 0;
@@ -107,39 +124,10 @@ public class PricePerHour {
             if (fourHourPrice[i] < fourHourPrice[min])
                 min = i;
         }
-        System.out.println("Det är billigast att ladda bilen kl. " + priceList[min].getHour().substring(0,5) + " - " + priceList[min + 4].getHour().substring(0,5));
-        System.out.println("Medelpris per kw/h: " + (Math.round(fourHourPrice[min] / 4) + " öre"));
+        System.out.println("Det är billigast att ladda bilen med start kl. " + priceList[min].getHour().substring(0,5) + " till kl. " + priceList[min + 4].getHour().substring(0,5));
+        System.out.println("Medelpris per kwh: " + ((int) Math.round(fourHourPrice[min] / 4) + " öre"));
     }
 
-//    public static void visualization(PricePerHour[] priceList, int minPriceIndex, int maxPriceIndex){
-//        int maxPriceLength = String.valueOf(priceList[maxPriceIndex].getPrice()).length();
-//        int minPriceLength = String.valueOf(priceList[minPriceIndex].getPrice()).length();
-//
-//        for (int y = 0; y < 12; y++) {
-//            System.out.println();
-//            for (int x = 0; x < 77; x++) {
-//                if (y == 0 && x == 0)
-//                    System.out.print(priceList[maxPriceIndex].getPrice() + Main.addSpaces( 5 - maxPriceLength)); // ändra till border
-//                else if (y == 9 && x == 0)
-//                    System.out.print(priceList[minPriceIndex].getPrice() + Main.addSpaces( 5 - minPriceLength));
-//                if (x == 5 && y != 0 && y != 9 && y != 11)
-//                    System.out.print("     |");
-//                else if (x == 5)
-//                    System.out.print("|");
-//                else if (y == 10 & x > 5)
-//                    System.out.print("-");
-//                else if (y == 11 & x > 5 && x - 6 < priceList.length)
-//                    System.out.print(priceList[x-6].getHour().substring(0,2) + " ");
-//                else if (y == 11)
-//                    System.out.print(" ");
-//                if (x > 5 && x - 6 < priceList.length && y < 10 && checkPriceRange(priceList, x - 6) <= y)
-//                    System.out.print(" * ");
-//                else if (x > 5 && x - 6 < priceList.length && y < 10)
-//                    System.out.print("   ");
-//            }
-//        }
-//        System.out.println();
-//    }
     public static void visualization(PricePerHour[] priceList, int minPriceIndex, int maxPriceIndex){
         int maxPriceLength = String.valueOf(priceList[maxPriceIndex].getPrice()).length();
         int minPriceLength = String.valueOf(priceList[minPriceIndex].getPrice()).length();
@@ -148,39 +136,72 @@ public class PricePerHour {
         for (int y = 0; y < 12; y++) {
             System.out.println();
             for (int x = 0; x < 77; x++) {
-                if (y == 0 && x == 0)
-                    System.out.print(priceList[maxPriceIndex].getPrice() + Main.addSpaces( distanceToOutline - maxPriceLength) + "|");
-                else if (y == 9 && x == 0)
-                    System.out.print(priceList[minPriceIndex].getPrice() + Main.addSpaces( distanceToOutline - minPriceLength) + "|");
-                if (x == distanceToOutline && y != 0 && y != 9 && y != 11)
-                    System.out.print(Main.addSpaces(distanceToOutline) + "|");
-                else if (y == 10 & x > distanceToOutline)
-                    System.out.print("-");
-                else if (y == 11 & x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length)
-                    System.out.print(priceList[x - (distanceToOutline + 1)].getHour().substring(0,2) + " ");
-                else if (y == 11)
-                    System.out.print(" ");
-                if (x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length && y < 10 && checkPriceRange(priceList, x - (distanceToOutline + 1)) <= y)
-                    System.out.print(" * ");
-                else if (x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length && y < 10)
-                    System.out.print("   ");
+                addSpacesBetweenPriceAndOutline(priceList, minPriceIndex, maxPriceIndex, maxPriceLength, minPriceLength, distanceToOutline, y, x);
+                printOutlineAndHours(priceList, distanceToOutline, y, x);
+                visualizePriceRange(priceList, distanceToOutline, y, x);
             }
         }
         System.out.println();
     }
 
-    public static int checkPriceRange(PricePerHour[] priceList, int index) {
+    private static void visualizePriceRange(PricePerHour[] priceList, int distanceToOutline, int y, int x) {
+        if (x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length && y < 10 && checkPriceRange(priceList, x - (distanceToOutline + 1)) <= y)
+            System.out.print(" * ");
+        else if (x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length && y < 10)
+            System.out.print("   ");
+    }
+
+    private static void printOutlineAndHours(PricePerHour[] priceList, int distanceToOutline, int y, int x) {
+        if (x == distanceToOutline && y != 0 && y != 9 && y != 11)
+            System.out.print(addSpaces(distanceToOutline) + "|");
+        else if (y == 10 && x > distanceToOutline)
+            System.out.print("-");
+        else if (y == 11 && x > distanceToOutline && x - (distanceToOutline + 1) < priceList.length)
+            System.out.print(priceList[x - (distanceToOutline + 1)].getHour().substring(0,2) + " ");
+        else if (y == 11)
+            System.out.print(" ");
+    }
+
+    private static void addSpacesBetweenPriceAndOutline(PricePerHour[] priceList, int minPriceIndex, int maxPriceIndex, int maxPriceLength, int minPriceLength, int distanceToOutline, int y, int x) {
+        if (y == 0 && x == 0)
+            System.out.print(priceList[maxPriceIndex].getPrice() + addSpaces( distanceToOutline - maxPriceLength) + "|");
+        else if (y == 9 && x == 0)
+            System.out.print(priceList[minPriceIndex].getPrice() + addSpaces( distanceToOutline - minPriceLength) + "|");
+    }
+
+    private static int checkPriceRange(PricePerHour[] priceList, int index) {
         double price = priceList[index].getPrice();
         double maxPrice = priceList[maxPriceIndex(priceList)].getPrice();
         if (price / maxPrice * 10 < 0)
             return 0;
         return (int) (10 - (price / maxPrice) * 10);
     }
+    private static String addSpaces(int count) {
+        char c = ' ';
+        StringBuilder print = new StringBuilder();
+        for (int i = 0; i < count; i++) {
+            print.append(c);
+        }
+        return print.toString();
+    }
 
-
-
+    private static int checkIfValidPrice(Scanner scanner) {
+        int stringToNumber;
+        while(true) {
+            try {
+                stringToNumber = Integer.parseInt(scanner.next());
+                if (stringToNumber < 0)
+                    throw new IllegalArgumentException();
+                return stringToNumber;
+            }
+            catch (NumberFormatException e) {
+                System.out.print("Lägg in pris i hela ören: ");
+            }
+            catch (IllegalArgumentException exception) {
+                System.out.print("Negativa priser ej tillåtna. ");
+            }
+        }
+    }
 
 
 }
-
-

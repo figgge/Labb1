@@ -16,8 +16,7 @@ public class Menu {
             case "4" -> PricePerHour.cheapestChargingHours(priceList);
             case "5" -> PricePerHour.visualization(priceList, PricePerHour.minPriceIndex(priceList), PricePerHour.maxPriceIndex(priceList));
             case "e" -> System.exit(0);
-            // Secret menu:
-            case "a" -> displayMenu();
+            // Hidden menu:
             case "p" -> PricePerHour.printPriceList(priceList);
             case "r" -> PricePerHour.inputRandomPrices(priceList);
 
